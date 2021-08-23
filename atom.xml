@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Go Uuyh的博客</title>
+  
+  
+  <link href="http://example.com/atom.xml" rel="self"/>
+  
+  <link href="http://example.com/"/>
+  <updated>2021-08-22T16:00:00.000Z</updated>
+  <id>http://example.com/</id>
+  
+  <author>
+    <name>Go Uuyh</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>博客开张及本博客内容简介</title>
+    <link href="http://example.com/2021/08/23/Introduction-of-the-Blog/"/>
+    <id>http://example.com/2021/08/23/Introduction-of-the-Blog/</id>
+    <published>2021-08-22T16:00:00.000Z</published>
+    <updated>2021-08-22T16:00:00.000Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;这里是Go Uuyh的博客。在这里，我想记录自己想分享出来的知识与心得。&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="博客通告" scheme="http://example.com/tags/%E5%8D%9A%E5%AE%A2%E9%80%9A%E5%91%8A/"/>
+    
+  </entry>
+  
+</feed>
