@@ -28,6 +28,10 @@
     
     
     
+    <category term="博客相关" scheme="http://example.com/categories/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/"/>
+    
+    <category term="通告" scheme="http://example.com/categories/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3/%E9%80%9A%E5%91%8A/"/>
+    
     
     <category term="博客通告" scheme="http://example.com/tags/%E5%8D%9A%E5%AE%A2%E9%80%9A%E5%91%8A/"/>
     
