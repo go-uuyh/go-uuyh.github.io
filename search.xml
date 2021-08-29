@@ -4,11 +4,44 @@
   
     
     <entry>
+      <title>用于日常使用的Arch Linux的安装</title>
+      <link href="/2021/08/Arch-Linux-installation-for-daily-use/"/>
+      <url>/2021/08/Arch-Linux-installation-for-daily-use/</url>
+      
+        <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>如标题所言，这篇文章主要介绍以Arch Wiki为基础的Arch Linux的安装与配置，以使之适合日常使用，又在一定程度上兼顾安全与操作效率。另一方面，我也希望通过创作这篇文章来作为自己未来可能的安装新系统的备忘录。（注：这篇文章不会详细介绍各安装细节，大量可以在<a href="https://wiki.archlinux.org/title/Installation_guide">ArchWiki</a>上找到的基本步骤将被省略）</p><span id="more"></span><h1 id="基本系统的安装"><a href="#基本系统的安装" class="headerlink" title="基本系统的安装"></a>基本系统的安装</h1><h2 id="磁盘分区"><a href="#磁盘分区" class="headerlink" title="磁盘分区"></a>磁盘分区</h2><p>为了能够最大化地利用磁盘容量，我决定使用LVM（Logical Volume Manager, 逻辑卷管理）来管理磁盘。LVM的具体使用方法，详见ArchWiki的<a href="https://wiki.archlinux.org/title/LVM">这篇文章</a>。</p><p>我利用<code>cfdisk</code>将磁盘分出512MB大小的分区用于挂载<code>/boot</code>分区。参考<a href="https://wiki.archlinux.org/title/Install_Arch_Linux_on_LVM">这篇文章</a>可以将整个系统全部安装在LV上，并从LV正常启动。如果直接将<code>/boot</code>目录放在LV上，就会出现GRUB安装不成功的情况。</p><h3 id="创建PV"><a href="#创建PV" class="headerlink" title="创建PV"></a>创建PV</h3><p>在刚才分区之后未利用的磁盘分区上创建PV。例如：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">pvcreate /dev/nvme0n1p2<br></code></pre></td></tr></table></figure><h3 id="创建VG"><a href="#创建VG" class="headerlink" title="创建VG"></a>创建VG</h3><p>我使用”arch”这个名字来命名将要创建的VG。一般情况下，只需创建一个VG即可。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">vgcreate arch /dev/nvme0n1p2<br></code></pre></td></tr></table></figure><p>可使用<code>vgs</code>命令查看系统所有的VG名称。</p><p>如果有更多的磁盘，可以在它们上创建PV然后添加到VG中。例如：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">pvcreate /dev/sdb1<br>vgextend arch /dev/sdb1<span class="hljs-comment"># 添加新的PV到已存在的VG中</span><br></code></pre></td></tr></table></figure><h3 id="创建LV"><a href="#创建LV" class="headerlink" title="创建LV"></a>创建LV</h3><p><strong>方法一</strong></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">lvcreate -L 100G -n lv_home arch<span class="hljs-comment"># &quot;-n&quot;后为任意LV名(name)；&quot;-L&quot;后为大小(large)，其中&quot;L&quot;和&quot;G&quot;需大写</span><br></code></pre></td></tr></table></figure><p><strong>方法二</strong></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">lvcreate --extents 100%FREE arch -n lv_home<span class="hljs-comment"># &quot;100%FREE&quot;会用尽VG的剩余空间</span><br></code></pre></td></tr></table></figure><p>可使用<code>lvs</code>命令查看LV及每个LV所属的VG。</p><h3 id="LV扩容"><a href="#LV扩容" class="headerlink" title="LV扩容"></a>LV扩容</h3><p><strong>方法一</strong></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">lvresize -L +50G arch/lv_home<span class="hljs-comment"># [没有]&quot;/dev&quot;；在原来的基础上增加了50G</span><br></code></pre></td></tr></table></figure><p><strong>方法二</strong></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">lvresize -L 150G arch/lv_home<span class="hljs-comment"># 增加到150G</span><br></code></pre></td></tr></table></figure><p>如果是格式化后的LV扩容，需要使用以下命令使文件系统扩容（EXT家族）：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">resize2fs /dev/arch/lv_home<br></code></pre></td></tr></table></figure><ul><li>LV的路径似乎可以用另一种方式表示：<code>/dev/mapper/&#39;VG&#39;-&#39;LG&#39;</code>。感兴趣的同学可以使用虚拟机尝试。</li></ul><h3 id="格式化"><a href="#格式化" class="headerlink" title="格式化"></a>格式化</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">mkfs.ext4 /dev/arch/lv_home<br></code></pre></td></tr></table></figure><p>swap分区使用<code>mkswap</code>命令。</p><h2 id="安装与配置"><a href="#安装与配置" class="headerlink" title="安装与配置"></a>安装与配置</h2><p>完成了分区与格式化，并且将不同磁盘分区挂载到相应的挂载点上，就要修改<code>/etc/pacman.conf</code>，将<code>#Color</code>的注释去掉，再修改镜像源文件。</p><h3 id="下载与安装"><a href="#下载与安装" class="headerlink" title="下载与安装"></a>下载与安装</h3><p>接着，安装系统和必要组件：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">pacstrap /mnt base linux-lts linux-firmware base-devel lvm2 dhcp iwtcl git vim man zsh<br></code></pre></td></tr></table></figure><p>对于与ArchWiki的不同的解释：</p><ul><li><code>linux-lts</code>: 长期稳定版本，与<code>linux</code>相比bug更少。</li><li><code>base-devel</code>: 包含了基本工具的软件包。</li><li><code>lvm2</code>: LVM配置工具。</li><li><code>dhcp iwctl</code>: 网络。</li><li><code>git vim man zsh</code>: 略。</li></ul><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>若按照ArchWiki的步骤，到达<a href="https://wiki.archlinux.org/title/Installation_guide#Initramfs">Initramfs</a>步骤时，就要稍微注意一下。这个系统主要安装在LVM上，因此要参照<a href="https://wiki.archlinux.org/title/Install_Arch_Linux_on_LVM#Adding_mkinitcpio_hooks">Adding mkinitcpio hooks</a>小节修改<code>/etc/mkinitcpio.conf</code>并运行<code>mkinitcpio -P</code>。<br>（注：若<code>/usr</code>在一个单独的分区，请注意被修改的<code>HOOKS</code>行上方的”NOTE”。）</p><p>若将ArchWiki上的被本文忽略的步骤也都做完并成功的话，重启即可进入简陋的tty界面。至此，基本安装已全部完成。登录后参阅<a href="https://wiki.archlinux.org/title/General_recommendations">General recommendations</a>来进行进一步的配置。</p><h1 id="图形环境"><a href="#图形环境" class="headerlink" title="图形环境"></a>图形环境</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>如果不太确定要安装的具体组件，可以直接安装整个包组：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo pacman -S xorg<br></code></pre></td></tr></table></figure><p>接下来要安装显示管理器（<code>GDM</code>, <code>lightDM</code>等）或<code>xinit</code>以及桌面环境（DE）或窗口管理器（WM）。</p><h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>至此，一个非常基本的Arch Linux就安装完成了。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> IT </category>
+          
+          <category> OS </category>
+          
+          <category> 软件 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> IT </tag>
+            
+            <tag> OS </tag>
+            
+            <tag> 软件 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>博客开张及本博客内容简介</title>
       <link href="/2021/08/Introduction-of-the-Blog/"/>
       <url>/2021/08/Introduction-of-the-Blog/</url>
       
-        <content type="html"><![CDATA[<p>这里是Go Uuyh的博客。在这里，我想记录自己想分享出来的知识与心得。</p><span id="more"></span><p>本博客的主要内容大致为：</p><ul><li>以Arch Linux为例的Linux使用</li><li>编程学习过程中获得的心得体会</li><li>对在学校中习得的专业知识的理解</li><li>本博客文章的英文版本</li><li>本博客文章的日文版本</li></ul><p>如果我的博客能对读者有所启发，那便是我莫大的荣幸。</p>]]></content>
+        <content type="html"><![CDATA[<p>这里是Go Uuyh的博客。在这里，我想记录自己想分享出来的知识与心得。</p><span id="more"></span><p>本博客的主要内容大致为：</p><ul><li>以Arch Linux为例的Linux使用</li><li>编程学习过程中获得的心得体会</li><li>对在学校中习得的专业知识的理解</li><li>本博客文章的英文版本</li></ul><p>如果我的博客能对读者有所启发，那便是我莫大的荣幸。</p>]]></content>
       
       
       <categories>

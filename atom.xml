@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2021-08-22T16:00:00.000Z</updated>
+  <updated>2021-08-28T16:00:00.000Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>用于日常使用的Arch Linux的安装</title>
+    <link href="http://example.com/2021/08/Arch-Linux-installation-for-daily-use/"/>
+    <id>http://example.com/2021/08/Arch-Linux-installation-for-daily-use/</id>
+    <published>2021-08-28T16:00:00.000Z</published>
+    <updated>2021-08-28T16:00:00.000Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h1&gt;&lt;p&gt;如标题所言，这篇文章主要介绍以Arch Wiki为基础的Arch Linux的安装与配置，以使之适合日常使用，又在一定程度上兼顾安全与操作效率。另一方面，我也希望通过创作这篇文章来作为自己未来可能的安装新系统的备忘录。（注：这篇文章不会详细介绍各安装细节，大量可以在&lt;a href=&quot;https://wiki.archlinux.org/title/Installation_guide&quot;&gt;ArchWiki&lt;/a&gt;上找到的基本步骤将被省略）&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="IT" scheme="http://example.com/categories/IT/"/>
+    
+    <category term="OS" scheme="http://example.com/categories/IT/OS/"/>
+    
+    <category term="软件" scheme="http://example.com/categories/IT/%E8%BD%AF%E4%BB%B6/"/>
+    
+    
+    <category term="IT" scheme="http://example.com/tags/IT/"/>
+    
+    <category term="OS" scheme="http://example.com/tags/OS/"/>
+    
+    <category term="软件" scheme="http://example.com/tags/%E8%BD%AF%E4%BB%B6/"/>
+    
+  </entry>
   
   <entry>
     <title>博客开张及本博客内容简介</title>
